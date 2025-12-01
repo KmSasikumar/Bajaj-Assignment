@@ -29,22 +29,7 @@ Since my Registration Number (**22BCE11638**) ends in **38** (Even), the applica
 
 ## Application Flow Diagram
 
-[Start]
-   |
-   v
-[POST /generateWebhook] ----> { "regNo": "22BCE11638", ... }
-   |
-   v
-[Receive Response] <--------- { "accessToken": "...", "url": "..." }
-   |
-   v
-[Select Logic] -------------> REG NO ends in 38 (Even) -> Question 2
-   |
-   v
-[Submit Solution] ----------> POST /testWebhook with JWT
-   |
-   v
-[Success]
+![Architecture Diagram](architecture-diagram.png)
 
 
 ## Setup & Execution
