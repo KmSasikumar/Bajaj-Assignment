@@ -11,9 +11,9 @@ public class SqlSolutionService {
         // Extract last two digits from registration number
         String lastTwoDigits = regNo.substring(Math.max(0, regNo.length() - 2));
         int lastTwoDigitsInt = Integer.parseInt(lastTwoDigits);
-        
+
         log.info("Registration number: {}, Last two digits: {}", regNo, lastTwoDigitsInt);
-        
+
         // Determine which SQL problem to solve based on odd/even
         if (lastTwoDigitsInt % 2 == 1) {
             log.info("Odd registration number - solving Question 1");
@@ -23,64 +23,42 @@ public class SqlSolutionService {
             return solveQuestion2();
         }
     }
-    
+
     private String solveQuestion1() {
-        // Question 1 SQL Solution
-        // Based on typical SQL problems, this would be a complex query
-        // For demonstration, I'll provide a comprehensive SQL solution
-        
+        // Question 1: Find the department(s) with the highest average salary
+        // among departments with at least 5 employees.
+
         return """
-            SELECT 
-                d.department_name,
-                COUNT(DISTINCT e.employee_id) as total_employees,
-                AVG(s.salary) as avg_salary,
-                MAX(s.salary) as max_salary,
-                MIN(s.salary) as min_salary
-            FROM departments d
-            LEFT JOIN employees e ON d.department_id = e.department_id
-            LEFT JOIN salaries s ON e.employee_id = s.employee_id
-            WHERE s.salary IS NOT NULL
-            GROUP BY d.department_id, d.department_name
-            HAVING COUNT(DISTINCT e.employee_id) > 5
-            ORDER BY avg_salary DESC
-            LIMIT 10
-            """;
+                WITH DeptStats AS (
+                    SELECT d.department_name, AVG(e.salary) as avg_salary
+                    FROM departments d
+                    JOIN employees e ON d.department_id = e.department_id
+                    GROUP BY d.department_id, d.department_name
+                    HAVING COUNT(e.employee_id) >= 5
+                )
+                SELECT department_name, avg_salary
+                FROM DeptStats
+                WHERE avg_salary = (SELECT MAX(avg_salary) FROM DeptStats);
+                """;
     }
-    
+
     private String solveQuestion2() {
-        // Question 2 SQL Solution
-        // Alternative complex query for even registration numbers
-        
+        // Question 2: Find the top 3 highest-paid employees in each department.
+
         return """
-            WITH department_stats AS (
-                SELECT 
-                    department_id,
-                    COUNT(*) as employee_count,
-                    AVG(salary) as avg_dept_salary
-                FROM employees
-                GROUP BY department_id
-            ),
-            high_performers AS (
-                SELECT 
-                    e.employee_id,
-                    e.first_name,
-                    e.last_name,
-                    e.department_id,
-                    e.salary,
-                    ds.avg_dept_salary
-                FROM employees e
-                JOIN department_stats ds ON e.department_id = ds.department_id
-                WHERE e.salary > ds.avg_dept_salary * 1.2
-            )
-            SELECT 
-                hp.first_name || ' ' || hp.last_name as employee_name,
-                d.department_name,
-                hp.salary,
-                hp.avg_dept_salary,
-                ROUND((hp.salary - hp.avg_dept_salary) / hp.avg_dept_salary * 100, 2) as percentage_above_avg
-            FROM high_performers hp
-            JOIN departments d ON hp.department_id = d.department_id
-            ORDER BY percentage_above_avg DESC
-            """;
+                WITH RankedEmployees AS (
+                    SELECT
+                        d.department_name,
+                        e.first_name || ' ' || e.last_name as full_name,
+                        e.salary,
+                        DENSE_RANK() OVER (PARTITION BY d.department_id ORDER BY e.salary DESC) as rank
+                    FROM employees e
+                    JOIN departments d ON e.department_id = d.department_id
+                )
+                SELECT department_name, full_name, salary
+                FROM RankedEmployees
+                WHERE rank <= 3
+                ORDER BY department_name, salary DESC;
+                """;
     }
 }

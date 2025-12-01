@@ -346,44 +346,35 @@
                     <div>
                         <h4 class="font-semibold text-lg mb-4" style="color: var(--sage);">Question 1 (Odd Registration)</h4>
                         <div class="code-block text-sm">
-                            <pre><code>SELECT 
-    d.department_name,
-    COUNT(DISTINCT e.employee_id) as total_employees,
-    AVG(s.salary) as avg_salary,
-    MAX(s.salary) as max_salary,
-    MIN(s.salary) as min_salary
-FROM departments d
-LEFT JOIN employees e ON d.department_id = e.department_id
-LEFT JOIN salaries s ON e.employee_id = s.employee_id
-WHERE s.salary IS NOT NULL
-GROUP BY d.department_id, d.department_name
-HAVING COUNT(DISTINCT e.employee_id) > 5
-ORDER BY avg_salary DESC
-LIMIT 10</code></pre>
+                            <pre><code>WITH DeptStats AS (
+    SELECT d.department_name, AVG(e.salary) as avg_salary
+    FROM departments d
+    JOIN employees e ON d.department_id = e.department_id
+    GROUP BY d.department_id, d.department_name
+    HAVING COUNT(e.employee_id) >= 5
+)
+SELECT department_name, avg_salary
+FROM DeptStats
+WHERE avg_salary = (SELECT MAX(avg_salary) FROM DeptStats);</code></pre>
                         </div>
                     </div>
                     
                     <div>
                         <h4 class="font-semibold text-lg mb-4" style="color: var(--muted-blue);">Question 2 (Even Registration)</h4>
                         <div class="code-block text-sm">
-                            <pre><code>WITH department_stats AS (
+                            <pre><code>WITH RankedEmployees AS (
     SELECT 
-        department_id,
-        COUNT(*) as employee_count,
-        AVG(salary) as avg_dept_salary
-    FROM employees
-    GROUP BY department_id
+        d.department_name,
+        e.first_name || ' ' || e.last_name as full_name,
+        e.salary,
+        DENSE_RANK() OVER (PARTITION BY d.department_id ORDER BY e.salary DESC) as rank
+    FROM employees e
+    JOIN departments d ON e.department_id = d.department_id
 )
-SELECT 
-    e.first_name || ' ' || e.last_name as employee_name,
-    d.department_name,
-    e.salary,
-    ds.avg_dept_salary
-FROM employees e
-JOIN department_stats ds ON e.department_id = ds.department_id
-JOIN departments d ON e.department_id = d.department_id
-WHERE e.salary > ds.avg_dept_salary * 1.2
-ORDER BY (e.salary - ds.avg_dept_salary) / ds.avg_dept_salary DESC</code></pre>
+SELECT department_name, full_name, salary
+FROM RankedEmployees
+WHERE rank <= 3
+ORDER BY department_name, salary DESC;</code></pre>
                         </div>
                     </div>
                 </div>

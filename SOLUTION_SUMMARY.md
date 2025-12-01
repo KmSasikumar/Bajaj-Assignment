@@ -55,7 +55,8 @@ webhook-assignment/
 ### 2. Dynamic Problem Selection
 - Registration number parity analysis (odd/even)
 - Automatic SQL problem selection based on last two digits
-- Two different complex SQL solutions implemented
+- **Question 1 (Odd)**: Highest average salary department (min 5 employees)
+- **Question 2 (Even)**: Top 3 highest-paid employees per department
 
 ### 3. Secure API Integration
 - JWT token authentication for solution submission
@@ -94,7 +95,7 @@ mvn spring-boot:run
 mvn clean package
 
 # Run JAR
-java -jar target/webhook-assignment-0.0.1-SNAPSHOT.jar
+java -jar webhook-assignment.jar
 ```
 
 ## 🔧 Configuration

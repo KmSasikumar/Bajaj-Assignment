@@ -75,21 +75,21 @@ if (lastTwoDigitsInt % 2 == 1) {
 
 #### Question 1 (Odd Registration)
 - **Problem Type**: Department salary statistics
-- **Complexity**: Medium-High
+- **Complexity**: Medium
 - **Features**:
-  - Multi-table JOINs
-  - Aggregation functions (COUNT, AVG, MAX, MIN)
+  - CTE (Common Table Expression)
+  - Aggregation functions (AVG, MAX, COUNT)
+  - Subquery for filtering max average
   - GROUP BY with HAVING clause
-  - ORDER BY with LIMIT
 
 #### Question 2 (Even Registration)
-- **Problem Type**: High-performer identification
-- **Complexity**: High
+- **Problem Type**: Top N per group
+- **Complexity**: Medium-High
 - **Features**:
-  - Common Table Expressions (CTEs)
-  - Subqueries and window functions
-  - Percentage calculations
-  - Complex filtering logic
+  - CTE (Common Table Expression)
+  - Window Functions (DENSE_RANK)
+  - String concatenation
+  - Partitioning by department
 
 ### 4. JWT Authentication
 ```java
