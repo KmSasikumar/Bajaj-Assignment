@@ -7,15 +7,6 @@
 
 ---
 
-# Bajaj Finserv Health Qualifier 1 - Java Submission
-
-**Student Name:** Sasikumar  
-**Registration Number:** 22BCE11638  
-**University:** VIT Bhopal  
-**Email:** Kommamani012@gmail.com  
-
----
-
 This project is my submission for the **Bajaj Finserv Health Qualifier 1**. It is a Spring Boot application designed to automate the process of interacting with the Bajaj Health hiring API. 
 
 The application handles the full flow: generating a webhook, receiving a unique token, solving the assigned SQL problem based on my Registration Number, and submitting the final answer securely.
